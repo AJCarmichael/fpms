@@ -1,21 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Placement Drives</title>
-    <style>
-        body { font-family: Arial; }
-        .container { width: 800px; margin: auto; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        table, th, td { border: 1px solid #ccc; }
-        th, td { padding: 8px; text-align: center; }
-        a { text-decoration: none; color: #007BFF; }
-        button { padding: 5px 10px; background: #28a745; border: none; color: #fff; }
-    </style>
-</head>
-<body>
-<div class="container">
+@extends('layouts.app')
+
+@section('content')
+<div class="card">
     <h2>Placement Drives</h2>
-    <a href="{{ route('placements.create') }}">Create New Placement Drive</a>
+    <div class="dashboard-stats">
+        <a href="{{ route('placements.create') }}" class="btn">Create New Placement Drive</a>
+    </div>
     <table>
         <thead>
             <tr>
@@ -41,7 +31,6 @@
         </tbody>
     </table>
     <br>
-    <a href="{{ route('dashboard') }}">Back to Dashboard</a>
+    <a href="{{ route('dashboard') }}" class="btn">Back to Dashboard</a>
 </div>
-</body>
-</html> 
+@endsection

@@ -1,31 +1,39 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Create User</title>
-    <style>
-        body { font-family: Arial; }
-        .container { width: 400px; margin: auto; }
-        label { display: block; margin: 5px 0; }
-        input { width: 100%; padding: 8px; margin-bottom: 10px; }
-        button { padding: 10px 15px; background: #28a745; border: none; color: #fff; }
-        a { text-decoration: none; color: #007BFF; }
-    </style>
-</head>
-<body>
-<div class="container">
-    <h2>Create New User</h2>
-    <form method="POST" action="{{ route('users.store') }}">
+@extends('layouts.app')
+
+@section('content')
+<div class="card">
+    <h2>Create User</h2>
+    <form action="{{ route('users.store') }}" method="POST">
         @csrf
-        <label for="username">Username:</label>
-        <input type="text" name="username" required>
-        
-        <label for="password">Password:</label>
-        <input type="password" name="password" required>
-        
-        <button type="submit">Create User</button>
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="username" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password" required>
+        </div>
+        <div class="form-group">
+            <label for="privileges">Privileges:</label>
+            <select name="privileges" id="privileges" required>
+                <option value="admin">Admin</option>
+                <option value="editor">Editor</option>
+                <option value="view-only">View Only</option>
+            </select>
+        </div>
+        <button type="submit" class="btn">Create User</button>
     </form>
-    <br>
-    <a href="{{ route('dashboard') }}">Back to Dashboard</a>
 </div>
-</body>
-</html> 
+
+<div class="card">
+    <h2>Batch Create Users</h2>
+    <form action="{{ route('users.batchCreate') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <div class="form-group">
+            <label for="csv_file">Upload CSV File:</label>
+            <input type="file" name="csv_file" id="csv_file" required>
+        </div>
+        <button type="submit" class="btn">Upload and Create Users</button>
+    </form>
+</div>
+@endsection

@@ -1,18 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Create Placement Drive</title>
-    <style>
-        body { font-family: Arial; }
-        .container { width: 600px; margin: auto; }
-        label { display: block; margin: 5px 0; }
-        input, select { width: 100%; padding: 8px; margin-bottom: 10px; }
-        button { padding: 10px 15px; background: #28a745; border: none; color: #fff; }
-        a { text-decoration: none; color: #007BFF; }
-    </style>
-</head>
-<body>
-<div class="container">
+@extends('layouts.app')
+
+@section('content')
+<div class="card">
     <h2>Create Placement Drive</h2>
     <form method="POST" action="{{ route('placements.store') }}">
         @csrf
@@ -49,10 +38,9 @@
         <label for="min_sgpi">Minimum SGPI:</label>
         <input type="number" step="0.01" name="min_sgpi" required>
         
-        <button type="submit">Create Drive</button>
+        <button type="submit" class="btn">Create Drive</button>
     </form>
     <br>
-    <a href="{{ route('placements.index') }}">Back to Placements</a>
+    <a href="{{ route('placements.index') }}" class="btn">Back to Placements</a>
 </div>
-</body>
-</html> 
+@endsection

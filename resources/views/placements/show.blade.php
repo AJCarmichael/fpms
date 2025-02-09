@@ -1,19 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Placement Drive Details</title>
-    <style>
-        body { font-family: Arial; }
-        .container { width: 800px; margin: auto; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        table, th, td { border: 1px solid #ccc; }
-        th, td { padding: 8px; text-align: center; }
-        a { text-decoration: none; color: #007BFF; }
-        button { padding: 5px 10px; background: #007BFF; border: none; color: #fff; }
-    </style>
-</head>
-<body>
-<div class="container">
+@extends('layouts.app')
+
+@section('content')
+<div class="card">
     <h2>Placement Drive: {{ $placementDrive->company_name }}</h2>
     <p>Date: {{ $placementDrive->drive_date }}</p>
     <p>Location: {{ $placementDrive->location }}</p>
@@ -26,8 +14,8 @@
         <li>Minimum SGPI: {{ $placementDrive->min_sgpi }}</li>
     </ul>
     <h3>Eligible Students</h3>
-    <a href="{{ route('placements.export', $placementDrive->id) }}">Export Eligible Students as CSV</a>
-    <table>
+    <a href="{{ route('placements.export', $placementDrive->id) }}" class="btn">Export Eligible Students as CSV</a>
+    <table class="table">
         <thead>
             <tr>
                 <th>Roll Number</th>
@@ -54,7 +42,6 @@
         </tbody>
     </table>
     <br>
-    <a href="{{ route('placements.index') }}">Back to Placements</a>
+    <a href="{{ route('placements.index') }}" class="btn">Back to Placements</a>
 </div>
-</body>
-</html> 
+@endsection
