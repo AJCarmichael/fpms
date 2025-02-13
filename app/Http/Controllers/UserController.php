@@ -7,10 +7,10 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
+    // Render the user creation view
     public function create()
     {
         return view('users.create');
@@ -22,22 +22,23 @@ class UserController extends Controller
             $request->validate([
                 'username' => 'required|unique:users',
                 'password' => 'required|min:6',
-                'privileges' => 'required',
             ]);
 
             User::create([
+                'name'     => 'default name',
                 'username' => $request->username,
+                'email'    => $request->username . '@example.com',
                 'password' => Hash::make($request->password),
-                'privileges' => $request->privileges,
             ]);
 
             return redirect()->route('dashboard')->with('success', 'User created successfully.');
         } catch (Exception $e) {
             Log::error("User creation error: " . $e->getMessage());
-            return back()->withErrors(['Failed to create user.']);
+            return back()->withErrors(['Failed to create user: ' . $e->getMessage()]);
         }
     }
 
+    // New batch creation method for CSV upload
     public function batchCreate(Request $request)
     {
         $request->validate([
@@ -45,20 +46,25 @@ class UserController extends Controller
         ]);
 
         $file = $request->file('csv_file');
-        $data = array_map('str_getcsv', file($file));
+        $handle = fopen($file->getRealPath(), 'r');
 
-        foreach ($data as $row) {
-            $rollNumber = $row[0];
-            try {
-                User::create([
-                    'username' => $rollNumber,
-                    'password' => Hash::make($rollNumber),
-                    'privileges' => 'view-only',
-                ]);
-            } catch (Exception $e) {
-                Log::error("Batch user creation error for roll number $rollNumber: " . $e->getMessage());
+        while (($data = fgetcsv($handle)) !== false) {
+            $roll = trim($data[0]);
+            if (!empty($roll)) {
+                try {
+                    User::create([
+                        'name'     => 'default name',
+                        'username' => $roll,
+                        'email'    => $roll . '@example.com',
+                        'password' => Hash::make($roll),
+                    ]);
+                } catch(Exception $ex) {
+                    Log::error("Batch user creation error for roll {$roll}: " . $ex->getMessage());
+                    // Continue processing remaining rows
+                }
             }
         }
+        fclose($handle);
 
         return redirect()->route('dashboard')->with('success', 'Batch user creation completed.');
     }

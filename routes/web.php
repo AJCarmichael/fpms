@@ -30,4 +30,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::post('/users/batch-create', [UserController::class, 'batchCreate'])->name('users.batchCreate');
+    Route::post('/user/store', [UserController::class, 'store'])->name('user.store');
 });

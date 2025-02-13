@@ -3,6 +3,13 @@
 @section('content')
 <div class="card">
     <h2>Create User</h2>
+    @if($errors->any())
+        <div class="error">
+            @foreach($errors->all() as $error)
+                <p>{{ $error }}</p>
+            @endforeach
+        </div>
+    @endif
     <form action="{{ route('users.store') }}" method="POST">
         @csrf
         <div class="form-group">
@@ -12,14 +19,6 @@
         <div class="form-group">
             <label for="password">Password:</label>
             <input type="password" name="password" id="password" required>
-        </div>
-        <div class="form-group">
-            <label for="privileges">Privileges:</label>
-            <select name="privileges" id="privileges" required>
-                <option value="admin">Admin</option>
-                <option value="editor">Editor</option>
-                <option value="view-only">View Only</option>
-            </select>
         </div>
         <button type="submit" class="btn">Create User</button>
     </form>
