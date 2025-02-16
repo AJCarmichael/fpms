@@ -6,11 +6,15 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\StudentResultController;
 use App\Http\Controllers\PlacementDriveController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ChangePasswordController;
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth')->group(function () {
+    Route::get('password/change', [ChangePasswordController::class, 'showChangePasswordForm'])->name('password.change');
+    Route::post('password/change', [ChangePasswordController::class, 'update'])->name('password.change.post');
+
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 

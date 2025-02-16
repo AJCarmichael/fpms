@@ -25,6 +25,7 @@
         <a href="{{ route('student_results.upload') }}" class="btn">Upload Results</a>
         <a href="{{ route('placements.create') }}" class="btn">Add Placement Drive</a>
         <a href="{{ route('users.create') }}" class="btn">Create User</a>
+        <a href="{{ route('password.change') }}" class="btn">Change Password</a>
     </div>
 </div>
-@endsection 
+@endsection

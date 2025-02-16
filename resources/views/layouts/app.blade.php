@@ -16,6 +16,7 @@
             <a href="{{ route('student_results.upload') }}">Manage Student Results</a>
             <a href="{{ route('placements.index') }}">Manage Placements</a>
             <a href="{{ route('users.create') }}">Create User</a>
+            <a href="{{ route('password.change') }}">Change Password</a>
             <form method="POST" action="{{ route('logout') }}" class="logout-form">
                 @csrf
                 <button type="submit">Logout</button>
@@ -44,4 +45,4 @@
         <p>&copy; {{ date('Y') }} FCRIT Placement Management System. All rights reserved.</p>
     </footer>
 </body>
-</html> 
+</html>
