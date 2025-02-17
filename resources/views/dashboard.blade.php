@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+@if(Auth::user()->usertype == 'admin')
 <div class="card">
     <h2>Welcome to the Placement Management Dashboard</h2>
     <div class="dashboard-stats">
@@ -28,4 +29,7 @@
         <a href="{{ route('password.change') }}" class="btn">Change Password</a>
     </div>
 </div>
+@else
+    <p>You do not have permission to access this page.</p>
+@endif
 @endsection

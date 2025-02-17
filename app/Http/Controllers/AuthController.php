@@ -27,7 +27,14 @@ class AuthController extends Controller
 
             if (Auth::attempt($credentials)) {
                 $request->session()->regenerate();
-                return redirect()->route('dashboard');
+                
+                // Check usertype and redirect accordingly
+                $user = Auth::user();
+                if ($user->usertype == 'admin') {
+                    return redirect()->route('dashboard');
+                } else {
+                    return redirect()->route('studentdashboard');
+                }
             }
             
             return back()->withErrors([

@@ -7,6 +7,7 @@ use App\Http\Controllers\StudentResultController;
 use App\Http\Controllers\PlacementDriveController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ChangePasswordController;
+use App\Http\Controllers\StudentController;
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -35,4 +36,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::post('/users/batch-create', [UserController::class, 'batchCreate'])->name('users.batchCreate');
     Route::post('/user/store', [UserController::class, 'store'])->name('user.store');
+
+    // Student Dashboard Route
+    Route::get('/studentdashboard', [StudentController::class, 'dashboard'])->name('studentdashboard');
+
+    // Student Profile Route
+    Route::get('/student/profile', [StudentController::class, 'profile'])->name('student.profile');
 });

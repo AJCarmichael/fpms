@@ -12,6 +12,7 @@
                      <th>ID</th>
                      <th>Username</th>
                      <th>Email</th>
+                     <th>User Type</th> <!-- Added usertype column -->
                  </tr>
              </thead>
              <tbody>
@@ -20,14 +21,15 @@
                      <td>{{ $user->id }}</td>
                      <td>{{ $user->username }}</td>
                      <td>{{ $user->email ?? 'N/A' }}</td>
+                     <td>{{ $user->usertype }}</td> <!-- Display usertype -->
                  </tr>
                  @empty
                  <tr>
-                     <td colspan="3">No users available.</td>
+                     <td colspan="4">No users available.</td> <!-- Updated colspan -->
                  </tr>
                  @endforelse
              </tbody>
          </table>
     </div>
 </div>
-@endsection 
+@endsection

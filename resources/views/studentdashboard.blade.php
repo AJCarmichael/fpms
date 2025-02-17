@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+@if(Auth::user()->usertype == 'student')
 <div class="container mx-auto px-4 py-6">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <!-- Notification Panel -->
@@ -62,4 +63,7 @@
         </div>
     </div>
 </div>
+@else
+    <p>You do not have permission to access this page.</p>
+@endif
 @endsection

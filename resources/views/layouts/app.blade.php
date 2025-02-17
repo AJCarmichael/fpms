@@ -12,11 +12,16 @@
         </div>
         @auth
         <div class="nav">
-            <a href="{{ route('dashboard') }}">Dashboard</a>
-            <a href="{{ route('student_results.upload') }}">Manage Student Results</a>
-            <a href="{{ route('placements.index') }}">Manage Placements</a>
-            <a href="{{ route('users.create') }}">Create User</a>
-            <a href="{{ route('password.change') }}">Change Password</a>
+            @if(Auth::user()->usertype == 'admin')
+                <a href="{{ route('dashboard') }}">Dashboard</a>
+                <a href="{{ route('student_results.upload') }}">Manage Student Results</a>
+                <a href="{{ route('placements.index') }}">Manage Placements</a>
+                <a href="{{ route('users.create') }}">Create User</a>
+                <a href="{{ route('password.change') }}">Change Password</a>
+            @else
+                <a href="{{ route('studentdashboard') }}">Dashboard</a>
+                <a href="{{ route('student.profile') }}">My Account</a>
+            @endif
             <form method="POST" action="{{ route('logout') }}" class="logout-form">
                 @csrf
                 <button type="submit">Logout</button>

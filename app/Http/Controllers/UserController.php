@@ -22,6 +22,7 @@ class UserController extends Controller
             $request->validate([
                 'username' => 'required|unique:users',
                 'password' => 'required|min:6',
+                'usertype' => 'required|in:admin,student',
             ]);
 
             User::create([
@@ -29,6 +30,7 @@ class UserController extends Controller
                 'username' => $request->username,
                 'email'    => $request->username . '@example.com',
                 'password' => Hash::make($request->password),
+                'usertype' => $request->usertype,
             ]);
 
             return redirect()->route('dashboard')->with('success', 'User created successfully.');

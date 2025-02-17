@@ -20,6 +20,13 @@
             <label for="password">Password:</label>
             <input type="password" name="password" id="password" required>
         </div>
+        <div class="form-group">
+            <label for="usertype">User Type:</label>
+            <select name="usertype" id="usertype" required>
+                <option value="admin">Admin</option>
+                <option value="student">Student</option>
+            </select>
+        </div>
         <button type="submit" class="btn">Create User</button>
     </form>
 </div>
