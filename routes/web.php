@@ -46,7 +46,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/student/profile', [StudentController::class, 'profile'])->name('student.profile');
 
     // Analytics Route
-    Route::get('/analytics', function () {
-        return view('analytics.index');
-    })->name('analytics.index');
+    Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
 });

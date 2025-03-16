@@ -2,16 +2,21 @@
 
 @section('content')
 @if(Auth::user()->usertype == 'admin')
+<?php
+$totalStudents = \App\Models\Student::count();
+$totalDrives = \App\Models\PlacementDrive::count();
+?>
+
 <div class="card">
     <h2>Welcome to the Placement Management Dashboard</h2>
     <div class="dashboard-stats">
         <div class="stat-card">
             <h3>Total Students</h3>
-            <p>{{ $totalStudents ?? 0 }}</p>
+            <p>{{ $totalStudents }}</p>
         </div>
         <div class="stat-card">
             <h3>Placement Drives</h3>
-            <p>{{ $totalDrives ?? 0 }}</p>
+            <p>{{ $totalDrives }}</p>
         </div>
         <div class="stat-card">
             <h3>Placed Students</h3>
