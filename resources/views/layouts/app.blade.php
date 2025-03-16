@@ -18,9 +18,24 @@
                 <a href="{{ route('placements.index') }}">Manage Placements</a>
                 <a href="{{ route('users.create') }}">Create User</a>
                 <a href="{{ route('password.change') }}">Change Password</a>
+                {{--<a href="{{ route('admin.profile') }}">Admin Profile</a>--}}
+
+            @elseif(Auth::user()->usertype == 'deptco')
+                <a href="{{ route('dashboard') }}">Dashboard</a>
+                <a href="{{ route('student_results.upload') }}">Department Results</a>
+                <a href="{{ route('placements.index') }}">Department Placements</a>
+                <a href="{{ route('users.create') }}">Create Test</a>
+
+                <a href="{{ route('password.change') }}">Change Password</a>
+                <a href="{{ route('department.profile') }}">My Profile</a>
+
             @else
-                <a href="{{ route('studentdashboard') }}">Dashboard</a>
-                <a href="{{ route('student.profile') }}">My Account</a>
+                <a href="{{ route('dashboard') }}">Dashboard</a>
+                <a href="{{ route('students.notifications') }}">Notifications</a>
+                <a href="{{ route('students.test') }}">Placement Tests</a>
+                <a href="{{ route('students.application') }}">Application</a>
+                <a href="{{ route('password.change') }}">Change Password</a>
+                {{--<a href="{{ route('student.profile') }}">My Account</a>--}}
             @endif
             <form method="POST" action="{{ route('logout') }}" class="logout-form">
                 @csrf

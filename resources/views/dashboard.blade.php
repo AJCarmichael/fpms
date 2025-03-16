@@ -29,7 +29,26 @@
         <a href="{{ route('password.change') }}" class="btn">Change Password</a>
     </div>
 </div>
+
 @else
-    <p>You do not have permission to access this page.</p>
+<div class="card">
+    <h2>Welcome to the Placement Management Dashboard</h2>
+    <div class="dashboard-stats">
+        <div class="stat-card">
+            <h3>Total Students</h3>
+            <p>{{ $totalStudents ?? 0 }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Placement Drives</h3>
+            <p>{{ $totalDrives ?? 0 }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Placed Students</h3>
+            <p>{{ $placedStudents ?? 0 }}</p>
+        </div>
+    </div>
+</div>
+
+
 @endif
 @endsection
