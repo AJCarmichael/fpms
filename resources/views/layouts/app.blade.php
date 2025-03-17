@@ -15,7 +15,9 @@
             @if(Auth::user()->usertype == 'admin')
                 <a href="{{ route('dashboard') }}">Dashboard</a>
                 <a href="{{ route('student_results.upload') }}">Manage Student Results</a>
+                <a href="{{ route('student_results.view') }}">View Uploaded Results</a>
                 <a href="{{ route('placements.index') }}">Manage Placements</a>
+                <a href="{{ route('analytics.index') }}">Analytics</a>
                 <a href="{{ route('users.create') }}">Create User</a>
                 <a href="{{ route('password.change') }}">Change Password</a>
                 {{--<a href="{{ route('admin.profile') }}">Admin Profile</a>--}}

@@ -61,18 +61,16 @@ class StudentResultController extends Controller
 
             foreach ($dataRows as $row) {
                 // Extract CSV columns
-                $rollNo   = $row['Roll Number'] ?? null;
-                $name     = $row['Name'] ?? null;
-                $seatNo   = $row['Seat No'] ?? null;
-                $subject1 = $row['Subject1 CGPA'] ?? null;
-                $subject2 = $row['Subject2 CGPA'] ?? null;
-                $subject3 = $row['Subject3 CGPA'] ?? null;
-                $subject4 = $row['Subject4 CGPA'] ?? null;
-                $subject5 = $row['Subject5 CGPA'] ?? null;
-                $subject6 = $row['Subject6 CGPA'] ?? null;
-                $overall  = $row['Overall Semester CGPA'] ?? null;
-                $sgpi     = $row['SGPI'] ?? null;
-                $kt_flag  = isset($row['KT Flag']) && (strtolower($row['KT Flag']) == 'true' || $row['KT Flag'] == '1') ? true : false;
+                $rollNo   = $row['student_id'] ?? null;
+                $subject1 = $row['subject1_cgpa'] ?? null;
+                $subject2 = $row['subject2_cgpa'] ?? null;
+                $subject3 = $row['subject3_cgpa'] ?? null;
+                $subject4 = $row['subject4_cgpa'] ?? null;
+                $subject5 = $row['subject5_cgpa'] ?? null;
+                $subject6 = $row['subject6_cgpa'] ?? null;
+                $overall  = $row['overall_semester_cgpa'] ?? null;
+                $sgpi     = $row['sgpi'] ?? null;
+                $kt_flag  = isset($row['kt_flag']) && (strtolower($row['kt_flag']) == 'true' || $row['kt_flag'] == '1') ? true : false;
 
                 if (!$rollNo) {
                     continue;
@@ -81,16 +79,8 @@ class StudentResultController extends Controller
                 // Find (or create) the student record using roll number as unique identifier
                 $student = Student::firstOrCreate(
                     ['roll_no' => $rollNo],
-                    ['name' => $name, 'seat_no' => $seatNo, 'branch' => $branch, 'year' => $year, 'lifetime_kt_count' => 0]
+                    ['branch' => $branch, 'year' => $year]
                 );
-
-                // Update additional fields if needed
-                $student->update([
-                    'name'    => $name,
-                    'seat_no' => $seatNo,
-                    'branch'  => $branch,
-                    'year'    => $year,
-                ]);
 
                 // Create the student result record for this semester
                 StudentResult::create([
@@ -118,7 +108,13 @@ class StudentResultController extends Controller
             return redirect()->route('dashboard')->with('success', 'Student results applied successfully.');
         } catch (Exception $e) {
             Log::error("Apply results error: " . $e->getMessage());
-            return back()->withErrors(['Failed to apply student results.']);
+            return redirect()->route('dashboard');
         }
+    }
+
+    public function viewResults()
+    {
+        $results = StudentResult::with('student')->get();
+        return view('student_results.view', compact('results'));
     }
 }

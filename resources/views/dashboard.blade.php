@@ -27,6 +27,7 @@
         <a href="{{ route('placements.create') }}" class="btn">Add Placement Drive</a>
         <a href="{{ route('users.create') }}" class="btn">Create User</a>
         <a href="{{ route('password.change') }}" class="btn">Change Password</a>
+        <a href="{{ route('analytics.index') }}" class="btn">View Analytics</a>
     </div>
 </div>
 

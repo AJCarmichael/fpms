@@ -31,4 +31,4 @@ class CreateStudentResultsTable extends Migration
     {
         Schema::dropIfExists('student_results');
     }
-} 
+}

@@ -8,9 +8,9 @@ use App\Http\Controllers\PlacementDriveController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ChangePasswordController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\AnalyticsController;
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth')->group(function () {
     Route::get('password/change', [ChangePasswordController::class, 'showChangePasswordForm'])->name('password.change');
@@ -23,6 +23,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/student-results/upload', [StudentResultController::class, 'showUploadForm'])->name('student_results.upload');
     Route::post('/student-results/process', [StudentResultController::class, 'processCSV'])->name('student_results.process');
     Route::post('/student-results/apply', [StudentResultController::class, 'applyResults'])->name('student_results.apply');
+    Route::get('/student-results/view', [StudentResultController::class, 'viewResults'])->name('student_results.view');
     
     // Placement Drives Routes
     Route::get('/placements', [PlacementDriveController::class, 'index'])->name('placements.index');
@@ -42,4 +43,9 @@ Route::middleware('auth')->group(function () {
 
     // Student Profile Route
     Route::get('/student/profile', [StudentController::class, 'profile'])->name('student.profile');
+
+    // Analytics Route
+    Route::get('/analytics', function () {
+        return view('analytics.index');
+    })->name('analytics.index');
 });

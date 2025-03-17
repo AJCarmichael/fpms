@@ -39,10 +39,28 @@ class PlacementDriveController extends Controller
             ]);
 
             $placementDrive = PlacementDrive::create($request->all());
-            return redirect()->route('placements.show', $placementDrive->id)
-                             ->with('success', 'Placement drive created successfully.');
+
+            // Filter students matching the criteria
+            $eligibleStudents = Student::where('branch', $placementDrive->eligibility_branch)
+                ->where('year', $placementDrive->eligibility_year)
+                ->where('lifetime_kt_count', '<=', $placementDrive->kt_threshold)
+                ->with(['latestResult' => function($query) {
+                    $query->orderBy('semester', 'desc');
+                }])
+                ->get()
+                ->filter(function($student) use ($placementDrive) {
+                    $result = $student->latestResult;
+                    if (!$result) {
+                        return false;
+                    }
+                    return $result->overall_semester_cgpa >= $placementDrive->min_cgpa &&
+                           $result->sgpi >= $placementDrive->min_sgpi;
+                });
+
+            return view('placements.show', compact('placementDrive', 'eligibleStudents'))
+                   ->with('success', 'Placement drive created successfully.');
         } catch (Exception $e) {
-            Log::error("Store placement drive error: " . $e->getMessage());
+            Log::error("Create placement drive error: " . $e->getMessage());
             return back()->withErrors(['Failed to create placement drive.']);
         }
     }
@@ -111,6 +129,47 @@ class PlacementDriveController extends Controller
         } catch (Exception $e) {
             Log::error("CSV export error: " . $e->getMessage());
             return back()->withErrors(['Failed to export CSV.']);
+        }
+    }
+
+    public function createByResults(Request $request)
+    {
+        try {
+            $request->validate([
+                'company_name'        => 'required',
+                'drive_date'          => 'required|date',
+                'location'            => 'required',
+                'eligibility_branch'  => 'required',
+                'eligibility_year'    => 'required',
+                'kt_threshold'        => 'required|integer',
+                'min_cgpa'            => 'required|numeric',
+                'min_sgpi'            => 'required|numeric',
+            ]);
+
+            $placementDrive = PlacementDrive::create($request->all());
+
+            // Filter students matching the criteria
+            $eligibleStudents = Student::where('branch', $placementDrive->eligibility_branch)
+                ->where('year', $placementDrive->eligibility_year)
+                ->where('lifetime_kt_count', '<=', $placementDrive->kt_threshold)
+                ->with(['latestResult' => function($query) {
+                    $query->orderBy('semester', 'desc');
+                }])
+                ->get()
+                ->filter(function($student) use ($placementDrive) {
+                    $result = $student->latestResult;
+                    if (!$result) {
+                        return false;
+                    }
+                    return $result->overall_semester_cgpa >= $placementDrive->min_cgpa &&
+                           $result->sgpi >= $placementDrive->min_sgpi;
+                });
+
+            return view('placements.show', compact('placementDrive', 'eligibleStudents'))
+                   ->with('success', 'Placement drive created successfully.');
+        } catch (Exception $e) {
+            Log::error("Create placement drive by results error: " . $e->getMessage());
+            return back()->withErrors(['Failed to create placement drive.']);
         }
     }
 }
