@@ -4,7 +4,8 @@
 @if(Auth::user()->usertype == 'admin')
 <?php
 $totalStudents = \App\Models\Student::count();
-$totalDrives = \App\Models\PlacementDrive::count();
+$totalGroups = \App\Models\PlacementGroup::count();
+$placedStudents = \App\Models\StudentResult::where('isPlaced', 'yes')->count();
 ?>
 
 <div class="card">
@@ -15,12 +16,12 @@ $totalDrives = \App\Models\PlacementDrive::count();
             <p>{{ $totalStudents }}</p>
         </div>
         <div class="stat-card">
-            <h3>Placement Drives</h3>
-            <p>{{ $totalDrives }}</p>
+            <h3>Placement Groups</h3>
+            <p>{{ $totalGroups }}</p>
         </div>
         <div class="stat-card">
             <h3>Placed Students</h3>
-            <p>{{ $placedStudents ?? 0 }}</p>
+            <p>{{ $placedStudents }}</p>
         </div>
     </div>
 </div>
@@ -28,7 +29,7 @@ $totalDrives = \App\Models\PlacementDrive::count();
 <div class="card">
     <h3>Quick Actions</h3>
     <div class="quick-actions">
-        <a href="{{ route('student_results.upload') }}" class="btn">Upload Results</a>
+        <a href="{{ route('student_results.index') }}" class="btn">Manage Student Results</a>
         <a href="{{ route('placements.create') }}" class="btn">Add Placement Drive</a>
         <a href="{{ route('users.create') }}" class="btn">Create User</a>
         <a href="{{ route('password.change') }}" class="btn">Change Password</a>

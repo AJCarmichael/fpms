@@ -124,4 +124,61 @@ class StudentResultController extends Controller
         $results = StudentResult::with('student')->get();
         return view('student_results.view', compact('results'));
     }
+
+    public function clearAllResults()
+    {
+        try {
+            StudentResult::truncate();
+            return redirect()->route('student_results.view')->with('success', 'All student results cleared successfully.');
+        } catch (Exception $e) {
+            Log::error("Clear all results error: " . $e->getMessage());
+            return back()->withErrors(['Failed to clear all student results.']);
+        }
+    }
+
+    public function editResults()
+    {
+        $results = StudentResult::with('student')->get();
+        return view('student_results.edit', compact('results'));
+    }
+
+    public function updateResults(Request $request)
+    {
+        try {
+            $dataRows = $request->input('rows');
+
+            foreach ($dataRows as $row) {
+                $result = StudentResult::find($row['student_id']);
+                if ($result) {
+                    $result->update($row);
+                }
+            }
+
+            return redirect()->route('student_results.view')->with('success', 'Student results updated successfully.');
+        } catch (Exception $e) {
+            Log::error("Update results error: " . $e->getMessage());
+            return back()->withErrors(['Failed to update student results.']);
+        }
+    }
+
+    public function deleteResult($id)
+    {
+        try {
+            $result = StudentResult::find($id);
+            if ($result) {
+                $result->delete();
+                return redirect()->route('student_results.view')->with('success', 'Student result deleted successfully.');
+            } else {
+                return back()->withErrors(['Student result not found.']);
+            }
+        } catch (Exception $e) {
+            Log::error("Delete result error: " . $e->getMessage());
+            return back()->withErrors(['Failed to delete student result.']);
+        }
+    }
+
+    public function index()
+    {
+        return view('student_results.index');
+    }
 }

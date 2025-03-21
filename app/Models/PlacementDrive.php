@@ -18,5 +18,11 @@ class PlacementDrive extends Model
         'kt_threshold',
         'min_cgpa',
         'min_sgpi',
+        'placement_group_id',
     ];
-} 
+
+    public function placementGroup()
+    {
+        return $this->belongsTo(\App\Models\PlacementGroup::class);
+    }
+}

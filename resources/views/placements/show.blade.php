@@ -44,4 +44,15 @@
     <br>
     <a href="{{ route('placements.index') }}" class="btn">Back to Placements</a>
 </div>
+<div>
+    <h3>Update Placed Students</h3>
+    <form method="POST" action="{{ route('placements.updatePlacedStudents', $placementDrive->id) }}" enctype="multipart/form-data">
+        @csrf
+        <div>
+            <label for="csv_file">Upload CSV (Single column with student IDs)</label>
+            <input type="file" name="csv_file" id="csv_file" required>
+        </div>
+        <button type="submit">Update Placed Status</button>
+    </form>
+</div>
 @endsection

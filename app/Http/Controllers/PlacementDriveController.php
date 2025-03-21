@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\PlacementDrive;
 use App\Models\Student;
+use App\Models\StudentResult;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use App\Models\PlacementGroup; // if needed for listing groups
 
 class PlacementDriveController extends Controller
 {
@@ -17,11 +19,12 @@ class PlacementDriveController extends Controller
         return view('placements.index', compact('placements'));
     }
 
-    public function create()
+    public function create($groupId = null)
     {
         $branches = ['CSE', 'ECE', 'ME', 'CE'];
         $years = [1, 2, 3, 4];
-        return view('placements.create', compact('branches', 'years'));
+        $placementGroups = \App\Models\PlacementGroup::all();
+        return view('placements.create', compact('branches', 'years', 'placementGroups', 'groupId'));
     }
 
     public function store(Request $request)
@@ -36,6 +39,7 @@ class PlacementDriveController extends Controller
                 'kt_threshold'        => 'required|integer',
                 'min_cgpa'            => 'required|numeric',
                 'min_sgpi'            => 'required|numeric',
+                'placement_group_id'  => 'nullable|exists:placement_groups,id',
             ]);
 
             $placementDrive = PlacementDrive::create($request->all());
@@ -45,7 +49,8 @@ class PlacementDriveController extends Controller
                 ->where('year', $placementDrive->eligibility_year)
                 ->where('lifetime_kt_count', '<=', $placementDrive->kt_threshold)
                 ->with(['latestResult' => function($query) {
-                    $query->orderBy('semester', 'desc');
+                    $query->orderBy('semester', 'desc')
+                          ->where('isPlaced', 'no');
                 }])
                 ->get()
                 ->filter(function($student) use ($placementDrive) {
@@ -75,7 +80,8 @@ class PlacementDriveController extends Controller
                 ->where('year', $placementDrive->eligibility_year)
                 ->where('lifetime_kt_count', '<=', $placementDrive->kt_threshold)
                 ->with(['latestResult' => function($query) {
-                    $query->orderBy('semester', 'desc');
+                    $query->orderBy('semester', 'desc')
+                          ->where('isPlaced', 'no');
                 }])
                 ->get()
                 ->filter(function($student) use ($placementDrive) {
@@ -102,7 +108,8 @@ class PlacementDriveController extends Controller
                 ->where('year', $placementDrive->eligibility_year)
                 ->where('lifetime_kt_count', '<=', $placementDrive->kt_threshold)
                 ->with(['latestResult' => function($query) {
-                    $query->orderBy('semester', 'desc');
+                    $query->orderBy('semester', 'desc')
+                          ->where('isPlaced', 'no');
                 }])
                 ->get()
                 ->filter(function($student) use ($placementDrive) {
@@ -153,7 +160,8 @@ class PlacementDriveController extends Controller
                 ->where('year', $placementDrive->eligibility_year)
                 ->where('lifetime_kt_count', '<=', $placementDrive->kt_threshold)
                 ->with(['latestResult' => function($query) {
-                    $query->orderBy('semester', 'desc');
+                    $query->orderBy('semester', 'desc')
+                          ->where('isPlaced', 'no');
                 }])
                 ->get()
                 ->filter(function($student) use ($placementDrive) {
@@ -170,6 +178,47 @@ class PlacementDriveController extends Controller
         } catch (Exception $e) {
             Log::error("Create placement drive by results error: " . $e->getMessage());
             return back()->withErrors(['Failed to create placement drive.']);
+        }
+    }
+
+    // New method: Update placed students using a single-column CSV containing student IDs
+    public function updatePlacedStudents(Request $request, PlacementDrive $placementDrive)
+    {
+        try {
+            $request->validate(['csv_file' => 'required|file|mimes:csv,txt']);
+            $file = $request->file('csv_file');
+            $placedIds = [];
+            if (($handle = fopen($file->getRealPath(), 'r')) !== false) {
+                while (($row = fgetcsv($handle, 0, ",")) !== false) {
+                    if (isset($row[0]) && is_numeric($row[0])) {
+                        $placedIds[] = trim($row[0]);
+                    }
+                }
+                fclose($handle);
+            }
+            
+            // Update the student_results for the corresponding student IDs to mark as placed ("yes")
+            StudentResult::whereIn('student_id', $placedIds)
+                ->where('isPlaced', 'no')
+                ->update(['isPlaced' => 'yes']);
+            
+            return redirect()->route('placements.show', $placementDrive->id)
+                             ->with('success', 'Placed student statuses updated.');
+        } catch (Exception $e) {
+            Log::error("Update placed students error: " . $e->getMessage());
+            return back()->withErrors(['Failed to update placed students.']);
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $placementDrive = PlacementDrive::findOrFail($id);
+            $placementDrive->delete();
+            return back()->with('success', 'Placement drive deleted successfully.');
+        } catch (Exception $e) {
+            Log::error("Delete placement drive error: " . $e->getMessage());
+            return back()->withErrors(['Failed to delete placement drive.']);
         }
     }
 }

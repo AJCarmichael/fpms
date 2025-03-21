@@ -23,10 +23,11 @@ class StudentResult extends Model
         'overall_semester_cgpa',
         'sgpi',
         'kt_flag',
+        'isPlaced',
     ];
     
     public function student()
     {
         return $this->belongsTo(Student::class);
     }
-} 
+}

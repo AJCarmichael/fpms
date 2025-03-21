@@ -21,17 +21,28 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Student Results Routes
-    Route::get('/student-results/upload', [StudentResultController::class, 'showUploadForm'])->name('student_results.upload');
-    Route::post('/student-results/process', [StudentResultController::class, 'processCSV'])->name('student_results.process');
-    Route::post('/student-results/apply', [StudentResultController::class, 'applyResults'])->name('student_results.apply');
-    Route::get('/student-results/view', [StudentResultController::class, 'viewResults'])->name('student_results.view');
-    
+    Route::prefix('student-results')->group(function () {
+        Route::get('/upload', [StudentResultController::class, 'showUploadForm'])->name('student_results.upload');
+        Route::post('/process', [StudentResultController::class, 'processCSV'])->name('student_results.process');
+        Route::post('/apply', [StudentResultController::class, 'applyResults'])->name('student_results.apply');
+        Route::get('/view', [StudentResultController::class, 'viewResults'])->name('student_results.view');
+        Route::delete('/clear', [StudentResultController::class, 'clearAllResults'])->name('student_results.clear');
+        Route::get('/edit', [StudentResultController::class, 'editResults'])->name('student_results.edit');
+        Route::put('/update', [StudentResultController::class, 'updateResults'])->name('student_results.update');
+        Route::get('/delete/{id}', [StudentResultController::class, 'deleteResult'])->name('student_results.delete');
+        Route::get('/', [StudentResultController::class, 'index'])->name('student_results.index'); // Added index route
+    });
+
+    Route::get('/student_results', [StudentResultController::class, 'index'])->name('student_results.index');
+
     // Placement Drives Routes
     Route::get('/placements', [PlacementDriveController::class, 'index'])->name('placements.index');
     Route::get('/placements/create', [PlacementDriveController::class, 'create'])->name('placements.create');
     Route::post('/placements', [PlacementDriveController::class, 'store'])->name('placements.store');
     Route::get('/placements/{placementDrive}', [PlacementDriveController::class, 'show'])->name('placements.show');
     Route::get('/placements/{placementDrive}/export', [PlacementDriveController::class, 'exportCsv'])->name('placements.export');
+    Route::post('placements/{placementDrive}/update-placed-students', [PlacementDriveController::class, 'updatePlacedStudents'])->name('placements.updatePlacedStudents');
+    Route::delete('/placements/{id}', [PlacementDriveController::class, 'destroy'])->name('placements.destroy');
 
     // User management (for additional admin users)
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
@@ -47,4 +58,7 @@ Route::middleware('auth')->group(function () {
 
     // Analytics Route
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
+
+    // Placement Groups Routes
+    Route::resource('placementGroups', App\Http\Controllers\PlacementGroupController::class);
 });

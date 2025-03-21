@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <title>@yield('title', 'FCRIT Placement Management System')</title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="header">
@@ -14,11 +15,10 @@
         <div class="nav">
             @if(Auth::user()->usertype == 'admin')
                 <a href="{{ route('dashboard') }}">Dashboard</a>
-                <a href="{{ route('student_results.upload') }}">Manage Student Results</a>
-                <a href="{{ route('student_results.view') }}">View Uploaded Results</a>
-                <a href="{{ route('placements.index') }}">Manage Placements</a>
+                <a href="{{ route('student_results.index') }}">Manage Student Results</a>
                 <a href="{{ route('analytics.index') }}">Analytics</a>
                 <a href="{{ route('users.create') }}">Create User</a>
+                <a href="{{ route('placementGroups.index') }}">Manage Placement Groups</a>
                 <a href="{{ route('password.change') }}">Change Password</a>
             @else
                 <a href="{{ route('studentdashboard') }}">Dashboard</a>

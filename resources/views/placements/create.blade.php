@@ -38,6 +38,17 @@
         <label for="min_sgpi">Minimum SGPI:</label>
         <input type="number" step="0.01" name="min_sgpi" required>
         
+        <div>
+            <label for="placement_group_id">Placement Group</label>
+            <select name="placement_group_id" id="placement_group_id">
+                <option value="">-- None --</option>
+                @foreach($placementGroups as $group)
+                    <option value="{{ $group->id }}" {{ isset($groupId) && $groupId == $group->id ? 'selected' : '' }}>{{ $group->name }}</option>
+                @endforeach
+            </select>
+            <a href="{{ route('placementGroups.create') }}">Create New Group</a>
+        </div>
+        
         <button type="submit" class="btn">Create Drive</button>
     </form>
     <br>
