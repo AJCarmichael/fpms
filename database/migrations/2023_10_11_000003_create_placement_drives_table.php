@@ -10,6 +10,8 @@ class CreatePlacementDrivesTable extends Migration
     {
         Schema::create('placement_drives', function (Blueprint $table) {
             $table->id();
+            // Added to link drive with placement group
+            $table->unsignedBigInteger('placement_group_id')->nullable();
             $table->string('company_name');
             $table->date('drive_date');
             $table->string('location');
@@ -18,6 +20,12 @@ class CreatePlacementDrivesTable extends Migration
             $table->integer('kt_threshold');
             $table->float('min_cgpa');
             $table->float('min_sgpi');
+            
+            // Foreign key constraint for placement group (assumes placement_groups table exists)
+            $table->foreign('placement_group_id')
+                  ->references('id')->on('placement_groups')
+                  ->onDelete('set null');
+            
             $table->timestamps();
         });
     }
@@ -26,4 +34,4 @@ class CreatePlacementDrivesTable extends Migration
     {
         Schema::dropIfExists('placement_drives');
     }
-} 
+}

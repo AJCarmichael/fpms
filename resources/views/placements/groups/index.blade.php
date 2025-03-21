@@ -15,7 +15,7 @@
                 <ul class="list-group">
                     @foreach($group->placementDrives as $drive)
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            {{ $drive->company_name }}
+                            {{ $drive->company_name }} - {{ $drive->drive_date }}
                             <form action="{{ route('placements.destroy', $drive->id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')

@@ -19,12 +19,13 @@ class PlacementDriveController extends Controller
         return view('placements.index', compact('placements'));
     }
 
-    public function create($groupId = null)
+    public function create($group = null)
     {
         $branches = ['CSE', 'ECE', 'ME', 'CE'];
         $years = [1, 2, 3, 4];
-        $placementGroups = \App\Models\PlacementGroup::all();
-        return view('placements.create', compact('branches', 'years', 'placementGroups', 'groupId'));
+        // Select only necessary fields including thumbnail so that group images can be shown
+        $placementGroups = PlacementGroup::select('id', 'name', 'thumbnail')->get();
+        return view('placements.create', compact('branches', 'years', 'placementGroups', 'group'));
     }
 
     public function store(Request $request)
@@ -67,6 +68,40 @@ class PlacementDriveController extends Controller
         } catch (Exception $e) {
             Log::error("Create placement drive error: " . $e->getMessage());
             return back()->withErrors(['Failed to create placement drive.']);
+        }
+    }
+
+    // New edit method for updating a placement drive
+    public function edit(PlacementDrive $placementDrive)
+    {
+        $branches = ['CSE', 'ECE', 'ME', 'CE'];
+        $years = [1, 2, 3, 4];
+        // Retrieve groups with thumbnail for selection
+        $placementGroups = PlacementGroup::select('id', 'name', 'thumbnail')->get();
+        return view('placements.edit', compact('placementDrive', 'branches', 'years', 'placementGroups'));
+    }
+
+    // New update method for handling placement drive edits
+    public function update(Request $request, PlacementDrive $placementDrive)
+    {
+        try {
+            $request->validate([
+                'company_name'        => 'required',
+                'drive_date'          => 'required|date',
+                'location'            => 'required',
+                'eligibility_branch'  => 'required',
+                'eligibility_year'    => 'required',
+                'kt_threshold'        => 'required|integer',
+                'min_cgpa'            => 'required|numeric',
+                'min_sgpi'            => 'required|numeric',
+                'placement_group_id'  => 'nullable|exists:placement_groups,id',
+            ]);
+            $placementDrive->update($request->all());
+            return redirect()->route('placements.show', $placementDrive->id)
+                             ->with('success', 'Placement drive updated successfully.');
+        } catch (Exception $e) {
+            Log::error("Update placement drive error: " . $e->getMessage());
+            return back()->withErrors(['Failed to update placement drive.']);
         }
     }
 
