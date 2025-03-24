@@ -33,13 +33,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [StudentResultController::class, 'index'])->name('student_results.index'); // Added index route
     });
 
-    Route::get('/student_results', [StudentResultController::class, 'index'])->name('student_results.index');
-
     // Placement Drives Routes
     Route::get('/placements', [PlacementDriveController::class, 'index'])->name('placements.index');
     Route::get('/placements/create', [PlacementDriveController::class, 'create'])->name('placements.create');
     Route::post('/placements', [PlacementDriveController::class, 'store'])->name('placements.store');
     Route::get('/placements/{placementDrive}', [PlacementDriveController::class, 'show'])->name('placements.show');
+    Route::get('/placements/{placementDrive}/edit', [PlacementDriveController::class, 'edit'])->name('placements.edit'); // added edit route
+    Route::put('/placements/{placementDrive}', [PlacementDriveController::class, 'update'])->name('placements.update'); // added update route
     Route::get('/placements/{placementDrive}/export', [PlacementDriveController::class, 'exportCsv'])->name('placements.export');
     Route::post('placements/{placementDrive}/update-placed-students', [PlacementDriveController::class, 'updatePlacedStudents'])->name('placements.updatePlacedStudents');
     Route::delete('/placements/{id}', [PlacementDriveController::class, 'destroy'])->name('placements.destroy');
@@ -58,6 +58,8 @@ Route::middleware('auth')->group(function () {
 
     // Analytics Route
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
+    Route::get('/analytics/placement-group/{groupId}', [AnalyticsController::class, 'placementGroupAnalytics'])->name('analytics.placementGroup');
+    Route::get('/analytics/placement-drive/{driveId}', [AnalyticsController::class, 'placementDriveAnalytics'])->name('analytics.placementDrive');
 
     // Placement Groups Routes
     Route::resource('placementGroups', App\Http\Controllers\PlacementGroupController::class);

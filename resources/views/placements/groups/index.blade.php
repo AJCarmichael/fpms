@@ -16,11 +16,14 @@
                     @foreach($group->placementDrives as $drive)
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             {{ $drive->company_name }} - {{ $drive->drive_date }}
-                            <form action="{{ route('placements.destroy', $drive->id) }}" method="POST" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </form>
+                            <div>
+                                <a href="{{ route('placements.show', $drive->id) }}" class="btn btn-primary btn-sm">View Drive</a>
+                                <form action="{{ route('placements.destroy', $drive->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </div>
                         </li>
                     @endforeach
                 </ul>

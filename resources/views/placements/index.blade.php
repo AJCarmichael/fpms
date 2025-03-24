@@ -24,7 +24,12 @@
                     <td>{{ $placement->drive_date }}</td>
                     <td>{{ $placement->location }}</td>
                     <td>
-                        <a href="{{ route('placements.show', $placement->id) }}">View</a>
+                        <a href="{{ route('placements.show', $placement->id) }}" class="btn btn-primary">View</a>
+                        <form action="{{ route('placements.destroy', $placement->id) }}" method="POST" style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
                     </td>
                 </tr>
             @endforeach

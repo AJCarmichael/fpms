@@ -5,14 +5,36 @@
     <h1>Analytics Dashboard</h1>
     <p>Welcome to the analytics dashboard. Here you can view various metrics and reports.</p>
     
-    <div class="row">
+    <!-- Dropdowns for selecting placement group and drive -->
+    <div class="row mb-4">
         <div class="col-md-6">
-            <h3>Graph</h3>
-            <canvas id="graphCanvas"></canvas>
+            <label for="placementGroupSelect">Select Placement Group:</label>
+            <select id="placementGroupSelect" class="form-control">
+                <option value="">-- Select Group --</option>
+                @foreach($placementGroups as $group)
+                    <option value="{{ $group->id }}">{{ $group->name }}</option>
+                @endforeach
+            </select>
         </div>
         <div class="col-md-6">
-            <h3>Pie Chart</h3>
-            <canvas id="pieChartCanvas"></canvas>
+            <label for="placementDriveSelect">Select Placement Drive:</label>
+            <select id="placementDriveSelect" class="form-control">
+                <option value="">-- Select Drive --</option>
+                @foreach($placementDrives as $drive)
+                    <option value="{{ $drive->id }}">{{ $drive->company_name }} ({{ $drive->drive_date }})</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h3>SGPI of the Batch</h3>
+            <canvas id="sgpiGraphCanvas"></canvas>
+        </div>
+        <div class="col-md-6">
+            <h3>Placement Status</h3>
+            <canvas id="placementPieChartCanvas"></canvas>
         </div>
     </div>
 </div>
@@ -24,17 +46,17 @@
     // Data from the database
     var results = @json($results);
 
-    // Prepare data for the graph
+    // Prepare data for the SGPI graph
     var labels = results.map(result => result.year);
-    var data = results.map(result => result.avg_cgpa);
+    var data = results.map(result => result.avg_sgpi);
 
-    var ctx = document.getElementById('graphCanvas').getContext('2d');
-    var graphChart = new Chart(ctx, {
+    var ctx = document.getElementById('sgpiGraphCanvas').getContext('2d');
+    var sgpiGraphChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
             datasets: [{
-                label: 'Average CGPA',
+                label: 'Average SGPI',
                 data: data,
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1,
@@ -50,30 +72,34 @@
         }
     });
 
-    // Dummy data for the pie chart
-    var ctxPie = document.getElementById('pieChartCanvas').getContext('2d');
-    var pieChart = new Chart(ctxPie, {
+    // Data for the placement pie chart
+    var ctxPie = document.getElementById('placementPieChartCanvas').getContext('2d');
+    var placementPieChart = new Chart(ctxPie, {
         type: 'pie',
         data: {
-            labels: ['Red', 'Blue', 'Yellow'],
+            labels: ['Placed', 'Unplaced'],
             datasets: [{
-                label: 'Dummy Data',
-                data: [300, 50, 100],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)'
-                ],
-                borderWidth: 1
+                data: [{{ $overallPlacedCount }}, {{ $overallUnplacedCount }}],
+                backgroundColor: ['#4CAF50', '#F44336']
             }]
         },
         options: {
             responsive: true
+        }
+    });
+
+    // Event listeners for dropdowns
+    document.getElementById('placementGroupSelect').addEventListener('change', function() {
+        var groupId = this.value;
+        if (groupId) {
+            window.location.href = '/analytics/placement-group/' + groupId;
+        }
+    });
+
+    document.getElementById('placementDriveSelect').addEventListener('change', function() {
+        var driveId = this.value;
+        if (driveId) {
+            window.location.href = '/analytics/placement-drive/' + driveId;
         }
     });
 </script>

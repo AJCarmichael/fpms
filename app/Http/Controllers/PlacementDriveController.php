@@ -256,4 +256,14 @@ class PlacementDriveController extends Controller
             return back()->withErrors(['Failed to delete placement drive.']);
         }
     }
+
+    // New method to retrieve selection options for analytics
+    public function selection()
+    {
+        // Retrieve all placement groups and individual drives
+        $placementGroups = \App\Models\PlacementGroup::all();
+        $placementDrives = PlacementDrive::all();
+        // Return a view that lists available groups and drives for selection
+        return view('placements.selection', compact('placementGroups', 'placementDrives'));
+    }
 }
