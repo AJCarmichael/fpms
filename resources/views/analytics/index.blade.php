@@ -2,105 +2,133 @@
 
 @section('content')
 <div class="container">
-    <h1>Analytics Dashboard</h1>
-    <p>Welcome to the analytics dashboard. Here you can view various metrics and reports.</p>
-    
-    <!-- Dropdowns for selecting placement group and drive -->
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <label for="placementGroupSelect">Select Placement Group:</label>
-            <select id="placementGroupSelect" class="form-control">
-                <option value="">-- Select Group --</option>
-                @foreach($placementGroups as $group)
-                    <option value="{{ $group->id }}">{{ $group->name }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div class="col-md-6">
-            <label for="placementDriveSelect">Select Placement Drive:</label>
-            <select id="placementDriveSelect" class="form-control">
-                <option value="">-- Select Drive --</option>
-                @foreach($placementDrives as $drive)
-                    <option value="{{ $drive->id }}">{{ $drive->company_name }} ({{ $drive->drive_date }})</option>
-                @endforeach
-            </select>
+    <h1 class="text-center my-4">Analytics Dashboard</h1>
+    <p class="text-center mb-4">View detailed analytics and export reports for placement groups.</p>
+
+    <!-- Group selector -->
+    <div class="row mb-5">
+        <div class="col-md-6 offset-md-3">
+            <label for="placementGroupSelect" class="form-label">Select Placement Group:</label>
+            <div class="input-group">
+                <select id="placementGroupSelect" class="form-control">
+                    <option value="">-- Select Group --</option>
+                    @foreach($placementGroups as $group)
+                        <option value="{{ $group->id }}">{{ $group->name }}</option>
+                    @endforeach
+                </select>
+                <button id="confirmGroupButton" class="btn btn-primary">Confirm Group</button>
+            </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-6">
-            <h3>SGPI of the Batch</h3>
-            <canvas id="sgpiGraphCanvas"></canvas>
+    <!-- Analytics (hidden until confirmed) -->
+    <div id="analyticsSection" style="display: none;">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h3 class="text-center">SGPI Distribution</h3>
+                <canvas id="sgpiGraphCanvas"></canvas>
+                <p class="text-center mt-2">This bar chart represents the SGPI distribution of students.</p>
+            </div>
+            <div class="col-md-6">
+                <h3 class="text-center">Placement Status</h3>
+                <canvas id="placementPieChartCanvas"></canvas>
+                <p class="text-center mt-2">This pie chart shows the placement status of students.</p>
+            </div>
         </div>
-        <div class="col-md-6">
-            <h3>Placement Status</h3>
-            <canvas id="placementPieChartCanvas"></canvas>
+
+        <div class="text-center">
+            <button id="exportPdfButton" class="btn btn-success">Export as PDF</button>
         </div>
     </div>
 </div>
 @endsection
 
 @section('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Data from the database
-    var results = @json($results);
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Hard‑coded data from testres.csv
+    const sgpiData = [
+        8.17, 7.93, 6.89, 8.29, 7.24, 8.95, 7.58, 8.79, 7.15, 8.38,
+        7.93, 8.23, 6.88, 8.79, 7.21, 9.23, 7.13, 8.88, 6.63, 8.13,
+        8.03, 8.33, 6.93, 9.03, 7.18, 9.38, 7.73, 8.39, 7.08, 8.68
+    ];
+    const placementStatus = { placed: 25, unplaced: 5 };
 
-    // Prepare data for the SGPI graph
-    var labels = results.map(result => result.year);
-    var data = results.map(result => result.avg_sgpi);
+    let chartsInitialized = false,
+        sgpiChart, placementChart;
 
-    var ctx = document.getElementById('sgpiGraphCanvas').getContext('2d');
-    var sgpiGraphChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Average SGPI',
-                data: data,
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1,
-                fill: false
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
+    // 2. Get DOM nodes
+    const btnConfirm = document.getElementById('confirmGroupButton'),
+          section   = document.getElementById('analyticsSection'),
+          sel       = document.getElementById('placementGroupSelect');
+
+    // 3. Confirm group → show + init charts
+    btnConfirm.addEventListener('click', function() {
+        if (!sel.value) {
+            return alert('Please select a placement group.');
+        }
+        section.style.display = 'block';
+
+        if (!chartsInitialized) {
+            // Bar chart
+            const ctxBar = document.getElementById('sgpiGraphCanvas').getContext('2d');
+            sgpiChart = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: sgpiData.map((_, i) => `Student ${i + 1}`),
+                    datasets: [{
+                        label: 'SGPI',
+                        data: sgpiData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor:   'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { beginAtZero: true } }
                 }
-            }
+            });
+
+            // Pie chart
+            const ctxPie = document.getElementById('placementPieChartCanvas').getContext('2d');
+            placementChart = new Chart(ctxPie, {
+                type: 'pie',
+                data: {
+                    labels: ['Placed', 'Unplaced'],
+                    datasets: [{
+                        data: [placementStatus.placed, placementStatus.unplaced],
+                        backgroundColor: ['#4CAF50', '#F44336']
+                    }]
+                },
+                options: { responsive: true }
+            });
+
+            chartsInitialized = true;
+        } else {
+            // If they re‑click, just resize
+            sgpiChart.resize();
+            placementChart.resize();
         }
     });
 
-    // Data for the placement pie chart
-    var ctxPie = document.getElementById('placementPieChartCanvas').getContext('2d');
-    var placementPieChart = new Chart(ctxPie, {
-        type: 'pie',
-        data: {
-            labels: ['Placed', 'Unplaced'],
-            datasets: [{
-                data: [{{ $overallPlacedCount }}, {{ $overallUnplacedCount }}],
-                backgroundColor: ['#4CAF50', '#F44336']
-            }]
-        },
-        options: {
-            responsive: true
-        }
+    // 4. Export to PDF
+    document.getElementById('exportPdfButton').addEventListener('click', function() {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF();
+        pdf.text("Analytics Report", 105, 10, { align: "center" });
+        pdf.text("SGPI Distribution", 10, 20);
+        pdf.addImage(
+            document.getElementById('sgpiGraphCanvas').toDataURL(),
+            'PNG', 10, 25, 90, 60
+        );
+        pdf.text("Placement Status", 10, 95);
+        pdf.addImage(
+            document.getElementById('placementPieChartCanvas').toDataURL(),
+            'PNG', 10, 100, 90, 60
+        );
+        pdf.save("analytics_report.pdf");
     });
-
-    // Event listeners for dropdowns
-    document.getElementById('placementGroupSelect').addEventListener('change', function() {
-        var groupId = this.value;
-        if (groupId) {
-            window.location.href = '/analytics/placement-group/' + groupId;
-        }
-    });
-
-    document.getElementById('placementDriveSelect').addEventListener('change', function() {
-        var driveId = this.value;
-        if (driveId) {
-            window.location.href = '/analytics/placement-drive/' + driveId;
-        }
-    });
+});
 </script>
 @endsection

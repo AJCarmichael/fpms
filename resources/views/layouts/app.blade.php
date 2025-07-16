@@ -51,5 +51,12 @@
     <footer class="footer">
         <p>&copy; {{ date('Y') }} FCRIT Placement Management System. All rights reserved.</p>
     </footer>
+
+    <!-- global JS libs you need app‑wide -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+    {{-- this is where each page’s @section('scripts') will be injected --}}
+    @yield('scripts')
 </body>
 </html>
